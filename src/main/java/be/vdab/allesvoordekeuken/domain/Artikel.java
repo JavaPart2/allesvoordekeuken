@@ -5,7 +5,9 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "artikels")
-public class Artikel {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "soort")
+public abstract class Artikel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
