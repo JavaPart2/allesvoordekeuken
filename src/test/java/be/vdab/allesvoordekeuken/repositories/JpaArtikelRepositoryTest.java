@@ -52,4 +52,15 @@ public class JpaArtikelRepositoryTest extends AbstractTransactionalJUnit4SpringC
         assertThat(artikel.getId()).isPositive();
         assertThat(super.countRowsInTableWhere("artikels", "id = " + artikel.getId())).isOne();
     }
+
+    @Test
+    void findByNaamContains(){
+        assertThat(repository.findByNaamContains("es"))
+                .hasSize(super.jdbcTemplate.queryForObject(
+                        "select count(*) from artikels where naam like '%es%'", Integer.class
+                ))
+                .extracting(artikel -> artikel.getNaam().toLowerCase())
+                .allSatisfy(naam -> assertThat(naam).contains("es"))
+                .isSorted();
+    }
 }
