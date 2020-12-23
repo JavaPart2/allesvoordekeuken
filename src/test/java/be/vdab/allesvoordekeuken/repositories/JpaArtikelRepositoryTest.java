@@ -63,4 +63,13 @@ public class JpaArtikelRepositoryTest extends AbstractTransactionalJUnit4SpringC
                 .allSatisfy(naam -> assertThat(naam).contains("es"))
                 .isSorted();
     }
+
+    @Test
+    void verhoogAlleVPrijzen(){
+        assertThat(repository.verhoogAlleVPrijzen(BigDecimal.TEN))
+                .isEqualTo(super.countRowsInTable("artikels"));
+        assertThat(super.jdbcTemplate.queryForObject(
+                "select verkoopprijs from artikels where id = ?", BigDecimal.class, idVanTestArtikel()))
+                .isEqualByComparingTo("132");
+    }
 }
