@@ -1,5 +1,6 @@
 package be.vdab.allesvoordekeuken.repositories;
 
+import be.vdab.allesvoordekeuken.domain.ArtikelGroep;
 import be.vdab.allesvoordekeuken.domain.FoodArtikel;
 import be.vdab.allesvoordekeuken.domain.Korting;
 import be.vdab.allesvoordekeuken.domain.NonFoodArtikel;
@@ -16,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Import(JpaArtikelRepository.class)
-@Sql("/insertArtikel.sql")
+@Sql({"/insertArtikelGroep.sql", "/insertArtikel.sql"})
 public class JpaArtikelRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests {
     private final JpaArtikelRepository repository;
 //    private Artikel artikel;
@@ -71,7 +72,9 @@ public class JpaArtikelRepositoryTest extends AbstractTransactionalJUnit4SpringC
 
     @Test
     void createFood(){
-        var artikel = new FoodArtikel("testfood2", BigDecimal.ONE, BigDecimal.TEN, 7);
+        var artikelGroep = new ArtikelGroep("test");
+        manager.persist(artikelGroep);
+        var artikel = new FoodArtikel("testfood2", BigDecimal.ONE, BigDecimal.TEN, 7, artikelGroep);
         repository.create(artikel);
         assertThat(artikel.getId()).isPositive();
         assertThat(super.countRowsInTableWhere("artikels", "id = " + artikel.getId())).isOne();
@@ -79,7 +82,9 @@ public class JpaArtikelRepositoryTest extends AbstractTransactionalJUnit4SpringC
 
     @Test
     void createNonFood(){
-        var artikel = new NonFoodArtikel("testfood2", BigDecimal.ONE, BigDecimal.TEN, 30);
+        var artikelGroep = new ArtikelGroep("test");
+        manager.persist(artikelGroep);
+        var artikel = new NonFoodArtikel("testfood2", BigDecimal.ONE, BigDecimal.TEN, 30, artikelGroep);
         repository.create(artikel);
         assertThat(artikel.getId()).isPositive();
         assertThat(super.countRowsInTableWhere("artikels", "id = " + artikel.getId())).isOne();
@@ -109,5 +114,10 @@ public class JpaArtikelRepositoryTest extends AbstractTransactionalJUnit4SpringC
     void kortingenLezen(){
         assertThat(repository.findById(idVanTestFoodArtikel()).get().getKortingen())
                 .containsOnly(new Korting(1, BigDecimal.TEN));
+    }
+
+    @Test
+    void artikelGroepLazyLoaded(){
+        assertThat(repository.findById(idVanTestFoodArtikel()).get().getNaam()).isEqualTo("testfood");
     }
 }

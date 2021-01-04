@@ -10,29 +10,25 @@ import static org.assertj.core.api.Assertions.*;
 public class ArtikelTest {
     private final static BigDecimal WEDDE = BigDecimal.valueOf(200);
     private Artikel artikel;
+    private ArtikelGroep artikelGroep1;
+    private ArtikelGroep artikelGroep2;
 
     @BeforeEach
     void beforeEach(){
-        artikel = new FoodArtikel("test", BigDecimal.ONE, BigDecimal.TEN, 9);
+        artikelGroep1 = new ArtikelGroep("test");
+        artikelGroep2 = new ArtikelGroep("groep2");
+        artikel = new FoodArtikel("test", BigDecimal.ONE, BigDecimal.TEN, 9, artikelGroep1);
     }
 
     @Test
-    void verhoogVerkoopPrijs(){
-        artikel.verhoogVerkoopPrijs(BigDecimal.ONE);
-        assertThat(artikel.getVerkoopprijs()).isEqualByComparingTo("11");
+    void groep1EnArtikelZijnGekoppeld(){
+        assertThat(artikelGroep1.getArtikels()).contains(artikel);
+        assertThat(artikel.getArtikelgroep()).isEqualTo(artikelGroep1);
+        assertThat(artikelGroep2.getArtikels()).doesNotContain(artikel);
     }
 
     @Test
-    void verhoogVerkoopPrijsMetNullMislukt(){
-        assertThatNullPointerException().isThrownBy(() -> artikel.verhoogVerkoopPrijs(null));
-    }
-
-    @Test
-    void verhoogVerkoopPrijsMet0Mislukt(){
-        assertThatIllegalArgumentException().isThrownBy(() -> artikel.verhoogVerkoopPrijs(BigDecimal.ZERO));
-    }
-
-    void verhoogVerkoopPrijsMetNegatiefMislukt(){
-        assertThatIllegalArgumentException().isThrownBy(() -> artikel.verhoogVerkoopPrijs(BigDecimal.valueOf(-1)));
+    void nullAlsArtikelGroepMislukt(){
+        assertThatNullPointerException().isThrownBy(() -> artikel.setArtikelgroep(null));
     }
 }
