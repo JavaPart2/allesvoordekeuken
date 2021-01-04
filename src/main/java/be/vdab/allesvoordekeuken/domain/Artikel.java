@@ -11,6 +11,7 @@ import java.util.Set;
 @Table(name = "artikels")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "soort")
+@NamedEntityGraph(name = "Artikel.metGroep", attributeNodes = @NamedAttributeNode("artikelgroep"))
 public abstract class Artikel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
